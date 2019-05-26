@@ -90,7 +90,7 @@ get (Lens _ g) =
 -- prop> let types = (x :: Int, y :: String) in set sndL (x, y) z == (x, z)
 set ::
   Lens a b
-  -> a 
+  -> a
   -> b
   -> a
 set (Lens s _) a =
@@ -104,7 +104,7 @@ getsetLaw ::
   -> Bool
 getsetLaw l =
   \a -> set l a (get l a) == a
-  
+
 -- | The set/get law of lenses. This function should always return @True@.
 setgetLaw ::
   Eq b =>
@@ -114,7 +114,7 @@ setgetLaw ::
   -> Bool
 setgetLaw l a b =
   get l (set l a b) == b
-  
+
 -- | The set/set law of lenses. This function should always return @True@.
 setsetLaw ::
   Eq a =>
@@ -144,8 +144,7 @@ modify ::
   -> (b -> b)
   -> a
   -> a
-modify =
-  error "todo: modify"
+modify l f a = set l a (f $ get l a)
 
 -- | An alias for @modify@.
 (%~) ::
@@ -174,8 +173,7 @@ infixr 4 %~
   -> b
   -> a
   -> a
-(.~) =
-  error "todo: (.~)"
+(.~) l b a = set l a b
 
 infixl 5 .~
 
@@ -195,8 +193,7 @@ fmodify ::
   -> (b -> f b)
   -> a
   -> f a
-fmodify =
-  error "todo: fmodify"
+fmodify l f a = (\b -> l .~ b $ a) <$> f (get l a)
 
 -- |
 --
@@ -211,8 +208,7 @@ fmodify =
   -> f b
   -> a
   -> f a
-(|=) =
-  error "todo: (|=)"
+(|=) l fb a = set l a <$> fb
 
 infixl 5 |=
 
@@ -228,8 +224,7 @@ infixl 5 |=
 -- prop> let types = (x :: Int, y :: String) in setsetLaw fstL (x, y) z
 fstL ::
   Lens (x, y) x
-fstL =
-  error "todo: fstL"
+fstL = Lens (\i a -> (a, snd i)) fst
 
 -- |
 --
@@ -243,8 +238,7 @@ fstL =
 -- prop> let types = (x :: Int, y :: String) in setsetLaw sndL (x, y) z
 sndL ::
   Lens (x, y) y
-sndL =
-  error "todo: sndL"
+sndL = Lens (\i a -> (fst i, a)) snd
 
 -- |
 --
